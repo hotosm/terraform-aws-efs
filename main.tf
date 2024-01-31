@@ -1,4 +1,5 @@
 resource "aws_efs_file_system" "fs" {
+  encrypted       = true
   throughput_mode = var.efs_throughput_mode
 
   /**
