@@ -16,6 +16,10 @@ resource "aws_efs_file_system" "fs" {
     transition_to_archive = var.efs_throughput_mode == "elastic" ? lookup(var.efs_transitions, "to_archive") : null
 
   }
+
+  tags = {
+    Name = lookup(var.default_tags, "project")
+  }
 }
 
 resource "aws_efs_access_point" "ap" {
@@ -33,6 +37,10 @@ resource "aws_efs_access_point" "ap" {
       owner_gid   = lookup(var.access_meta, "posix_gid")
       permissions = lookup(var.access_meta, "unix_permissions")
     }
+  }
+
+  tags = {
+    Name = lookup(var.default_tags, "project")
   }
 }
 
