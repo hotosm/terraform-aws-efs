@@ -1,9 +1,11 @@
 resource "aws_efs_file_system" "fs" {
   throughput_mode = var.efs_throughput_mode
 
+  /**
   lifecycle_policy {
     transition_to_primary_storage_class = "AFTER_1_ACCESS"
   }
+**/
 
   lifecycle_policy {
     transition_to_ia = lookup(var.efs_transitions, "to_infrequent_access")
