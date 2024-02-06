@@ -6,7 +6,6 @@ resource "aws_efs_file_system" "fs" {
   lifecycle_policy {
     transition_to_primary_storage_class = "AFTER_1_ACCESS"
   }
-**/
 
   lifecycle_policy {
     transition_to_ia = lookup(var.efs_transitions, "to_infrequent_access")
@@ -14,8 +13,8 @@ resource "aws_efs_file_system" "fs" {
 
   lifecycle_policy {
     transition_to_archive = var.efs_throughput_mode == "elastic" ? lookup(var.efs_transitions, "to_archive") : null
-
   }
+**/
 
   tags = {
     Name = lookup(var.default_tags, "project")
