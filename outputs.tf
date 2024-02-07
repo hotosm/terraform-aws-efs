@@ -15,3 +15,10 @@ output "mount_target_id" {
 
   description = "Mount Target ID"
 }
+
+output "root_dir" {
+  value = aws_efs_access_point.ap.root_directory["path"]
+
+  description = "Root directory to mount via access point"
+}
+
