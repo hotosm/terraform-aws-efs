@@ -11,7 +11,7 @@ output "access_point_id" {
 }
 
 output "mount_target_id" {
-  value = aws_efs_mount_target.mt.*.id
+  value = [for t in aws_efs_mount_target.mt : t.id]
 
   description = "List of Mount Target IDs"
 }
