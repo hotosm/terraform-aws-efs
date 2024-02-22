@@ -11,6 +11,23 @@ variable "default_tags" {
   }
 }
 
+variable "vpc_id" {
+  description = "VPC ID in which resources are launched"
+  type        = string
+
+  validation {
+    condition     = startswith(var.vpc_id, "vpc-")
+    error_message = "VPC ID must start with `vpc-`"
+  }
+}
+
+variable "efs_mount_subnets" {
+  description = "Subnets in which EFS mount targets are created"
+  type        = list(string)
+
+  default = []
+}
+
 variable "efs_transitions" {
   default = {
     to_infrequent_access = "AFTER_30_DAYS"
@@ -47,8 +64,3 @@ variable "mount_target_security_groups" {
   default = []
 }
 
-variable "efs_mount_subnet" {
-  type = string
-
-  default = ""
-}

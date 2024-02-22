@@ -51,10 +51,39 @@ resource "aws_efs_backup_policy" "policy" {
   }
 }
 
+resource "aws_security_group" "efs" {
+  description = "Attach to app services for EFS access"
+
+  name_prefix = "efs-self-access-"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "Allow from self"
+    from_port   = 2049
+    to_port     = 2049
+    protocol    = "tcp"
+    self        = true
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "Access EFS"
+  }
+}
+
 resource "aws_efs_mount_target" "mt" {
+  for_each = toset(var.efs_mount_subnets)
+
   file_system_id  = aws_efs_file_system.fs.id
-  subnet_id       = var.efs_mount_subnet
-  security_groups = var.mount_target_security_groups
+  subnet_id       = each.value
+  security_groups = [aws_security_group.efs.id]
 }
 
 data "aws_iam_policy_document" "policy" {
