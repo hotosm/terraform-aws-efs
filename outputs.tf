@@ -16,7 +16,7 @@ output "mount_target_id" {
   description = "List of Mount Target IDs"
 }
 
-output "efs_access_security_group" {
+output "access_security_group" {
   value = aws_security_group.efs.id
 
   description = "The security group attached to resources to give access to EFS"

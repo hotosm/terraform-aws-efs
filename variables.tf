@@ -57,10 +57,3 @@ variable "backups_enabled" {
 
   default = "ENABLED"
 }
-
-variable "mount_target_security_groups" {
-  type = list(string)
-
-  default = []
-}
-
