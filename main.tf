@@ -3,16 +3,11 @@ resource "aws_efs_file_system" "fs" {
   throughput_mode = var.efs_throughput_mode
 
   /**
-  lifecycle_policy {
-    transition_to_primary_storage_class = "AFTER_1_ACCESS"
-  }
-
-  lifecycle_policy {
-    transition_to_ia = lookup(var.efs_transitions, "to_infrequent_access")
-  }
-
-  lifecycle_policy {
-    transition_to_archive = var.efs_throughput_mode == "elastic" ? lookup(var.efs_transitions, "to_archive") : null
+  dynamic "lifecycle_policy" {
+    for_each = var.lifecycle_policies
+    content {
+      lifecycle_policy_dot_key = lifecycle_policy.value
+    }
   }
 **/
 

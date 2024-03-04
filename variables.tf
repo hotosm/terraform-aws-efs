@@ -28,21 +28,54 @@ variable "efs_mount_subnets" {
   default = []
 }
 
-variable "efs_transitions" {
+variable "lifecycle_policies" {
+  description = "File transition to other storage classes; NOT YET IMPLEMENTED"
   default = {
-    to_infrequent_access = "AFTER_30_DAYS"
-    to_archive           = "AFTER_90_DAYS"
+    transition_to_primary_storage_class = ""
+    transition_to_ia                    = "AFTER_30_DAYS"
+    transition_to_archive               = "AFTER_90_DAYS"
+  }
+
+  validation {
+    condition = contains([
+      "AFTER_1_DAY", "AFTER_7_DAYS", "AFTER_14_DAYS",
+      "AFTER_30_DAYS", "AFTER_60_DAYS", "AFTER_90_DAYS",
+      "AFTER_180_DAYS", "AFTER_270_DAYS", "AFTER_365_DAYS"
+    ], lookup(var.lifecycle_policies, "transition_to_ia"))
+    error_message = "Invalid value for infrequent_access transition value"
+  }
+
+  validation {
+    condition = contains([
+      "AFTER_1_DAY", "AFTER_7_DAYS", "AFTER_14_DAYS",
+      "AFTER_30_DAYS", "AFTER_60_DAYS", "AFTER_90_DAYS",
+      "AFTER_180_DAYS", "AFTER_270_DAYS", "AFTER_365_DAYS"
+    ], lookup(var.lifecycle_policies, "transition_to_archive"))
+    error_message = "Invalid value for infrequent_access transition value"
   }
 }
 
 variable "efs_throughput_mode" {
-  type        = string
-  default     = "bursting"
   description = "Allowed values: bursting, provisioned, elastic"
+  type        = string
+
+  default = "bursting"
+
+  validation {
+    condition     = contains(["bursting", "provisioned", "elastic"], var.efs_throughput_mode)
+    error_message = "Invalid EFS throughput mode"
+  }
 }
 
 variable "access_meta" {
-  type = map(string)
+  description = "EFS file path, ownership, and permission settings"
+
+  type = object({
+    posix_uid          = string
+    posix_gid          = string
+    unix_permissions   = string
+    expose_as_root_dir = string
+  })
 
   default = {
     posix_uid          = "55555"
@@ -53,7 +86,13 @@ variable "access_meta" {
 }
 
 variable "backups_enabled" {
-  type = string
+  description = "Switch to enable or disable EFS backups"
+  type        = string
 
   default = "ENABLED"
+
+  validation {
+    condition     = contains(["ENABLED", "DISABLED"], var.backups_enabled)
+    error_message = "Invalid value; Must be either ENABLED or DISABLED"
+  }
 }
