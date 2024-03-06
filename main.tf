@@ -101,7 +101,7 @@ data "aws_iam_policy_document" "policy" {
     condition {
       test     = "Bool"
       variable = "aws:SecureTransport"
-      values   = ["true"]
+      values   = [var.secure_transport_enabled]
     }
   }
 }

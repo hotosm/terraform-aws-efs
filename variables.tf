@@ -96,3 +96,15 @@ variable "backups_enabled" {
     error_message = "Invalid value; Must be either ENABLED or DISABLED"
   }
 }
+
+variable "secure_transport_enabled" {
+  description = "Whether to enable TLS for EFS mounts"
+  type        = string
+
+  default = "false"
+
+  validation {
+    condition     = contains(["true", "false"], var.secure_transport_enabled)
+    error_message = "Value can be either true or false"
+  }
+}
